@@ -15,7 +15,7 @@ class MachineLearningAgent1 {
     assert(_interpreter != null);
   }
 
-  int predict(List<List<double>> State369) {
+  int predict(List<List<int>> State369) {
     var input = State369;
     var output = List.filled(_369Size, 0.0).reshape([1, _369Size]);
 

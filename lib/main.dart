@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflitexample/369_agent.dart';
@@ -56,21 +58,23 @@ class _MyHomePageState extends State<MyHomePage> {
   MachineLearningAgent1 _machineLearningAgent1 = MachineLearningAgent1();
 
   void _risingText() {
-    setState(() {
-      String answer = TsnDecode(
-          _counter, _machineLearningAgent1.predict(BinaryEncode(_counter)));
-      CheckAnswer(answer);
-    });
+    for (int j = 0; j < 10000; j++) {
+      setState(() {
+        String answer = TsnDecode(
+            _counter, _machineLearningAgent1.predict(BinaryEncode(_counter)));
+        CheckAnswer(answer);
+      });
+    }
   }
 
-  List<List<double>> BinaryEncode(int num) {
-    List<List<double>> i = '$num'
+  List<List<int>> BinaryEncode(int num) {
+    List<List<int>> i = '$num'
         .padLeft(5, '0')
         .codeUnits
         .map((int j) => j.toRadixString(2))
         .map((String bin) => bin.padLeft(7, '0').split('').reversed.toList())
         .map((List<String> binList) => binList
-            .map((String binElement) => double.parse(binElement))
+            .map((String binElement) => int.parse(binElement))
             .toList())
         .toList();
     return i;
@@ -110,16 +114,23 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     List n = TsnEncode(num);
     int max = n[0];
+    int maxIdx = 0;
+    int i = 0;
     for (final e in n) {
-      if (max < e) max = e;
+      if (max < e) {
+        max = e;
+        maxIdx = i;
+      }
+      i++;
     }
-    return list[max];
+    return list[maxIdx];
   }
 
   void CheckAnswer(String answer) {
     setState(() {
       if (answer == Tsn(_counter)) {
         _counter++;
+        print(_counter);
       } else {
         _log = 'stop at $_counter';
       }
@@ -176,9 +187,23 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Flexible(
-            child: SizedBox(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(child: SizedBox(), flex: 1,),
+                Flexible(child: SizedBox(
+                  child: ElevatedButton(
+                    onPressed: () {
+
+                    },
+                    child: Text('Hi'),
+                  ),
+                ), flex: 1,),
+                Flexible(child: SizedBox(), flex: 1,),
+              ],
+            ),
             flex: 4,
-          )
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
